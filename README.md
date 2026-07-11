@@ -146,10 +146,6 @@ Accepts patient data, returns prediction and confidence score.
 }
 ```
 
-## Build Progress
-
-See [build_plan.md](../build_plan.md) for task checklist and [build_log.md](../build_log.md) for phase-by-phase log.
-
 ## Documentation
 
 Full project documentation is available at:
