@@ -155,7 +155,7 @@ def build():
         Spacer(1, 0.5*cm),
         Paragraph("Machine Learning Operations (MLOps) — AIMLCZG523", COVER_SUB),
         Spacer(1, 0.3*cm),
-        Paragraph("Assignment 01  ·  Total Marks: 50", COVER_SUB),
+        Paragraph("Assignment 01", COVER_SUB),
         Spacer(1, 1.0*cm),
         Paragraph("Student: Sampath Kumar S Shetty", COVER_GREEN),
         Paragraph("ID: 2024ac05041", COVER_GREEN),
