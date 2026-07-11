@@ -2,6 +2,13 @@
 
 End-to-end MLOps pipeline for heart disease prediction — BITS Pilani AIMLCZG523 Assignment 01.
 
+| | |
+|---|---|
+| **Name** | Sampath Kumar S Shetty |
+| **Student ID** | 2024ac05041 |
+| **Course** | AIMLCZG523 — Machine Learning Operations |
+| **Institution** | BITS Pilani (M.Tech AI/ML) |
+
 ## Problem Statement
 
 Binary classifier predicting presence/absence of heart disease using the [Heart Disease UCI Dataset](https://archive.ics.uci.edu/dataset/45/heart+disease). Deployed as a cloud-ready, monitored REST API.
