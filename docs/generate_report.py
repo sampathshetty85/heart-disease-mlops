@@ -571,6 +571,8 @@ def build():
         Paragraph("GitHub Repository", H3),
         Paragraph("https://github.com/sampathshetty85/heart-disease-mlops", CODE),
         Spacer(1, 0.15*cm),
+    ] + img("screenshots/github_repo.png", caption="Figure — GitHub repository: heart-disease-mlops") + [
+        Spacer(1, 0.2*cm),
         Paragraph("GitHub Pages Documentation", H3),
         Paragraph("https://sampathshetty85.github.io/heart-disease-mlops/", CODE),
         Spacer(1, 0.2*cm),
