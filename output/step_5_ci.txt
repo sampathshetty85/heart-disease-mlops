@@ -1,0 +1,81 @@
+============================================================
+Validation Report: step_5_ci
+Generated : 2026-07-11T08:56:36Z
+============================================================
+
+STEP 5 -- CI/CD Pipeline & Automated Testing
+
+--- Flake8 Lint ---
+Command  : flake8 src/ tests/ --max-line-length=120 --statistics
+Result   : PASS (0 violations)
+
+--- GitHub Actions Workflow (.github/workflows/ci.yml) ---
+Trigger  : push + pull_request to main
+Runner   : ubuntu-latest, Python 3.12
+Steps    :
+  - name: Checkout code
+  - name: Set up Python 3.12
+  - name: Cache pip dependencies
+  - name: Install dependencies
+  - name: Lint (flake8)
+  - name: Download dataset
+  - name: Preprocess data
+  - name: Train models
+  - name: Run unit tests
+  - name: Upload pipeline reports
+
+--- Pytest Results ---
+Command  : pytest tests/ -v --tb=short
+Collected: 27 tests
+Passed   : 21
+Skipped  : 6  (test_api.py -- FastAPI app built in Phase 6)
+Failed   : 0
+Errors   : 0
+Overall  : PASS
+
+--- Per-File Results ---
+tests/test_preprocess.py : 8 pass  0 fail
+tests/test_model.py      : 8 pass  0 fail
+tests/test_predict.py    : 8 pass  0 fail
+tests/test_api.py        : 6 skipped  (activated in Phase 6)
+
+--- Passing Tests ---
+  PASS  test_model.py::test_pipeline_loads
+  PASS  test_model.py::test_model_loads
+  PASS  test_model.py::test_pipeline_has_steps
+  PASS  test_model.py::test_prediction_output_type
+  PASS  test_model.py::test_prediction_output_range
+  PASS  test_model.py::test_confidence_range
+  PASS  test_model.py::test_roc_auc_above_threshold
+  PASS  test_model.py::test_predict_dict_keys
+  PASS  test_predict.py::test_predict_returns_dict
+  PASS  test_predict.py::test_predict_keys_present
+  PASS  test_predict.py::test_predict_prediction_range
+  PASS  test_predict.py::test_predict_confidence_range
+  PASS  test_predict.py::test_predict_determinism
+  PASS  test_preprocess.py::test_load_raw_returns_dataframe
+  PASS  test_preprocess.py::test_handle_missing_no_nulls
+  PASS  test_preprocess.py::test_handle_missing_ca_thal_dtype
+  PASS  test_preprocess.py::test_binarize_target_binary
+  PASS  test_preprocess.py::test_binarize_target_drops_num
+  PASS  test_preprocess.py::test_split_shapes
+  PASS  test_preprocess.py::test_split_stratification
+  PASS  test_preprocess.py::test_feature_columns_exported
+
+--- Skipped Tests ---
+  SKIP  test_api.py::test_health_endpoint  (FastAPI app built in Phase 6)
+  SKIP  test_api.py::test_predict_endpoint_valid  (FastAPI app built in Phase 6)
+  SKIP  test_api.py::test_predict_response_keys  (FastAPI app built in Phase 6)
+  SKIP  test_api.py::test_predict_prediction_range  (FastAPI app built in Phase 6)
+  SKIP  test_api.py::test_predict_confidence_range  (FastAPI app built in Phase 6)
+  SKIP  test_api.py::test_predict_invalid_input  (FastAPI app built in Phase 6)
+
+--- CI Pipeline Artifact ---
+upload-artifact: output/ -> pipeline-reports (available in GitHub Actions run)
+CI URL: https://github.com/sampathshetty85/heart-disease-mlops/actions
+
+Status : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================
