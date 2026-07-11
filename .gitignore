@@ -1,6 +1,12 @@
-# Data — never commit raw or processed datasets
+# Data — never commit raw or split datasets
 data/raw/
-data/processed/
+data/processed/X_train.csv
+data/processed/X_test.csv
+data/processed/y_train.csv
+data/processed/y_test.csv
+data/processed/feature_columns.json
+
+# heart_cleaned.csv is intentionally committed — required deliverable per assignment spec
 
 # Trained model artifacts (top-level only — not src/models/)
 /models/
