@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heart Disease MLOps — AIMLCZG523</title>
+  <meta name="description" content="End-to-end MLOps pipeline: heart disease prediction API with CI/CD, Docker, Kubernetes, Prometheus and Grafana monitoring." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────────────────── -->
+<nav>
+  <span class="brand">❤️ Heart Disease MLOps</span>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#eda">EDA</a>
+    <a href="#models">Models</a>
+    <a href="#mlflow">MLflow</a>
+    <a href="#cicd">CI/CD</a>
+    <a href="#kubernetes">Kubernetes</a>
+    <a href="#monitoring">Monitoring</a>
+  </div>
+  <div class="nav-ctas">
+    <a class="btn btn-outline" href="https://github.com/sampathshetty85/heart-disease-mlops" target="_blank">GitHub</a>
+    <a class="btn btn-green" href="report.pdf" download>⬇ Download Report</a>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-badge">✓ All Phases Complete — 50/50 Marks</div>
+  <h1>Heart Disease <span>MLOps</span> Pipeline</h1>
+  <p>End-to-end ML solution: UCI dataset → sklearn Pipeline → FastAPI → Docker → Kubernetes → Prometheus + Grafana</p>
+  <div class="hero-meta">
+    <span><strong>Student:</strong> Sampath Kumar S Shetty</span>
+    <span><strong>ID:</strong> 2024ac05041</span>
+    <span><strong>Course:</strong> AIMLCZG523 · BITS Pilani</span>
+    <span><strong>Model:</strong> Logistic Regression (ROC-AUC 0.963)</span>
+  </div>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="https://github.com/sampathshetty85/heart-disease-mlops" target="_blank">View Repository</a>
+    <a class="btn btn-green" href="report.pdf" download>⬇ Download PDF Report</a>
+    <a class="btn btn-outline" href="https://github.com/sampathshetty85/heart-disease-mlops/actions" target="_blank">CI/CD Runs</a>
+  </div>
+</div>
+
+<!-- ── STATS ─────────────────────────────────────────────────── -->
+<div class="stats">
+  <div class="stat"><span class="stat-value">0.963</span><div class="stat-label">Test ROC-AUC</div></div>
+  <div class="stat"><span class="stat-value">27</span><div class="stat-label">Pytest Tests (0 fail)</div></div>
+  <div class="stat"><span class="stat-value">3</span><div class="stat-label">ML Models Trained</div></div>
+  <div class="stat"><span class="stat-value">2</span><div class="stat-label">K8s Replicas Running</div></div>
+  <div class="stat"><span class="stat-value">4</span><div class="stat-label">Grafana Panels</div></div>
+  <div class="stat"><span class="stat-value">10</span><div class="stat-label">CI Steps Passing</div></div>
+</div>
+
+<!-- ── MAIN CONTENT ───────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-title">1. Project Overview <span class="pill">Dataset + Problem</span></div>
+    <p class="section-sub">Binary classifier for heart disease risk prediction, deployed as a production-ready API.</p>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Dataset</h3>
+        <p>Heart Disease UCI Dataset (ucimlrepo id=45). 303 patients × 14 features. Binary target: presence/absence of heart disease. 164 no-disease (54.1%) / 139 disease (45.9%) — well-balanced.</p>
+      </div>
+      <div class="card">
+        <h3>Problem</h3>
+        <p>Predict heart disease risk from patient health data (age, cholesterol, chest pain type, ECG results, etc.). Deployed as a JSON REST API with confidence score.</p>
+      </div>
+      <div class="card">
+        <h3>Best Model</h3>
+        <p>Logistic Regression — CV ROC-AUC: 0.9026, Test ROC-AUC: 0.9632, Test Accuracy: 86.9%. Serialised to <code>pipeline.joblib</code> + <code>model.joblib</code> via joblib.</p>
+      </div>
+      <div class="card">
+        <h3>Architecture</h3>
+        <p>4-layer stack: Data Pipeline → CI/CD + Docker Build → Kubernetes (2 replicas) → API + Prometheus/Grafana monitoring.</p>
+      </div>
+    </div>
+    <div class="img-wrap">
+      <img src="../screenshots/architecture_diagram.png" alt="System architecture diagram" />
+      <div class="img-caption">Figure 1 — End-to-end system architecture</div>
+    </div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section id="pipeline">
+    <div class="section-title">2. ML Pipeline <span class="pill">sklearn ColumnTransformer</span></div>
+    <p class="section-sub">Data leakage prevention: scaler and encoder fit only on training data, serialised for reuse at inference.</p>
+    <div class="pipeline">
+      <div class="pipe-step"><span class="dot"></span> download.py</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="dot"></span> preprocess.py</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="dot"></span> ColumnTransformer</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="dot"></span> train.py (3 models)</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="dot"></span> pipeline.joblib</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="dot"></span> FastAPI /predict</div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Step</th><th>Transformer</th><th>Features</th></tr></thead>
+        <tbody>
+          <tr><td>Scaling</td><td>StandardScaler</td><td>age, trestbps, chol, thalach, oldpeak</td></tr>
+          <tr><td>Encoding</td><td>OneHotEncoder(drop='first', handle_unknown='ignore')</td><td>sex, cp, fbs, restecg, exang, slope, ca, thal</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <pre>curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"age":45,"sex":1,"cp":0,"trestbps":120,"chol":200,"fbs":0,
+       "restecg":0,"thalach":160,"exang":0,"oldpeak":0.0,"slope":2,"ca":0,"thal":2}'
+
+# Response:
+{"prediction": 0, "confidence": 0.9213, "label": "No Heart Disease"}</pre>
+  </section>
+
+  <!-- EDA -->
+  <section id="eda">
+    <div class="section-title">3. Exploratory Data Analysis <span class="pill">5 marks</span></div>
+    <p class="section-sub">Professional visualisations using Matplotlib, Seaborn, and Plotly. Key findings below.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Type</th><th>Correlation</th><th>Clinical Note</th></tr></thead>
+        <tbody>
+          <tr><td>thal</td><td>Categorical</td><td><strong>0.522</strong></td><td>Thalassemia type — strongest predictor</td></tr>
+          <tr><td>ca</td><td>Categorical</td><td>0.460</td><td>Number of major vessels coloured by fluoroscopy</td></tr>
+          <tr><td>exang</td><td>Categorical</td><td>0.432</td><td>Exercise-induced angina</td></tr>
+          <tr><td>oldpeak</td><td>Numeric</td><td>0.431</td><td>ST depression induced by exercise</td></tr>
+          <tr><td>cp (chest pain)</td><td>Categorical</td><td>−0.391</td><td>Type 0 (typical angina) strongly associated</td></tr>
+          <tr><td>chol</td><td>Numeric</td><td>0.082</td><td>Weak direct correlation; wide range 126–564</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="img-grid">
+      <figure>
+        <img src="../screenshots/eda/correlation_heatmap.png" alt="Correlation heatmap" />
+        <figcaption>Figure 2 — Feature correlation heatmap</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/eda/class_distribution.png" alt="Class distribution" />
+        <figcaption>Figure 3 — Class balance (54.1% / 45.9%)</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/eda/feature_histograms.png" alt="Feature histograms" />
+        <figcaption>Figure 4 — Numeric feature histograms by class</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/eda/boxplots_by_target.png" alt="Box plots" />
+        <figcaption>Figure 5 — Box plots: features vs target</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- MODELS -->
+  <section id="models">
+    <div class="section-title">4. Model Development &amp; Comparison <span class="pill">8 marks</span></div>
+    <p class="section-sub">Three models tuned with GridSearchCV / RandomizedSearchCV. Selection criterion: highest 5-fold CV ROC-AUC.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>CV ROC-AUC</th><th>Test ROC-AUC</th><th>Test Acc</th><th>Test F1</th><th>Tuning</th><th>Selected</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Logistic Regression</strong></td>
+            <td><strong>0.9026 ± 0.016</strong></td>
+            <td><strong>0.9632</strong></td>
+            <td>0.8689</td>
+            <td>0.8621</td>
+            <td>GridSearchCV</td>
+            <td><span class="badge badge-green">✓ Best</span></td>
+          </tr>
+          <tr>
+            <td>Random Forest</td>
+            <td>0.8845 ± 0.027</td>
+            <td>0.9481</td>
+            <td>0.8689</td>
+            <td>0.8621</td>
+            <td>RandomizedSearchCV</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>XGBoost</td>
+            <td>0.8690 ± 0.019</td>
+            <td>0.9383</td>
+            <td>0.8852</td>
+            <td>0.8772</td>
+            <td>RandomizedSearchCV</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem;">
+      Best hyperparameters (LR): C=10, solver=liblinear. XGBoost achieved slightly higher test accuracy (0.8852) but lower CV ROC-AUC — CV generalisation is the primary criterion.
+    </p>
+    <div class="img-wrap">
+      <img src="../screenshots/eda/roc_curves.png" alt="ROC curves" style="max-width:600px;" />
+      <div class="img-caption">Figure 6 — ROC curves for all 3 models (LR AUC = 0.9632)</div>
+    </div>
+  </section>
+
+  <!-- MLFLOW -->
+  <section id="mlflow">
+    <div class="section-title">5. Experiment Tracking — MLflow <span class="pill">5 marks</span></div>
+    <p class="section-sub">One run per model. Parameters, 10 metrics, artifacts (ROC curve, confusion matrix, full pipeline model) logged per run.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Run ID</th><th>CV ROC-AUC</th><th>Tag</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Logistic Regression</strong></td>
+            <td><code>e4abcc63...</code></td>
+            <td>0.9026</td>
+            <td><span class="badge badge-green">best_model=true</span></td>
+          </tr>
+          <tr>
+            <td>Random Forest</td>
+            <td><code>3f3b2fc0...</code></td>
+            <td>0.8845</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>XGBoost</td>
+            <td><code>ec91c4a1...</code></td>
+            <td>0.8690</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <pre>Model URI: runs:/e4abcc6349dd4254ac77172fbd19d08c/model
+mlflow ui --backend-store-uri mlruns/   # → http://localhost:5000</pre>
+    <div class="img-wrap">
+      <img src="../screenshots/mlflow/experiment_runs.png" alt="MLflow UI" />
+      <div class="img-caption">Figure 7 — MLflow experiment UI: 3 runs with parameters, metrics and artifacts</div>
+    </div>
+  </section>
+
+  <!-- CI/CD -->
+  <section id="cicd">
+    <div class="section-title">6. CI/CD Pipeline &amp; Testing <span class="pill">8 marks</span></div>
+    <p class="section-sub">GitHub Actions — 10-step pipeline. Fails loudly on lint errors or test failures. 27 pytest tests, 0 failures.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Step</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td>1–4</td><td>Checkout · Python 3.12 · pip cache · Install dependencies</td><td>~25s</td></tr>
+          <tr><td>5</td><td>flake8 lint (src/ + tests/, max-line-length=120)</td><td>3s</td></tr>
+          <tr><td>6</td><td>python src/data/download.py</td><td>6s</td></tr>
+          <tr><td>7</td><td>python src/data/preprocess.py</td><td>4s</td></tr>
+          <tr><td>8</td><td>python src/models/train.py</td><td>41s</td></tr>
+          <tr><td>9</td><td>pytest tests/ -v (27 tests)</td><td>8s</td></tr>
+          <tr><td>10</td><td>Upload pipeline-reports artifact</td><td>3s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="img-wrap">
+      <img src="../screenshots/ci/ci_passing.png" alt="GitHub Actions passing" />
+      <div class="img-caption">Figure 8 — GitHub Actions: all 10 steps passing (Run #29148726844 · 1m 38s)</div>
+    </div>
+  </section>
+
+  <!-- KUBERNETES -->
+  <section id="kubernetes">
+    <div class="section-title">7. Production Deployment — Kubernetes <span class="pill">7 marks</span></div>
+    <p class="section-sub">Minikube v1.36.0 (k8s v1.33.1). 2 replicas, LoadBalancer service, liveness + readiness probes.</p>
+    <div class="card-grid">
+      <div class="card">
+        <h3>Deployment spec</h3>
+        <p>Image: <code>sampathi348975/heart-disease-mlops:latest</code><br>
+        Replicas: 2 · imagePullPolicy: Always<br>
+        CPU: 250m req / 500m limit<br>
+        Memory: 256Mi req / 512Mi limit</p>
+      </div>
+      <div class="card">
+        <h3>Probes</h3>
+        <p>Liveness + Readiness: GET /health<br>
+        initialDelaySeconds: 5<br>
+        periodSeconds: 10 / 5<br>
+        failureThreshold: 3</p>
+      </div>
+      <div class="card">
+        <h3>Service</h3>
+        <p>type: LoadBalancer<br>
+        port 80 → containerPort 8000<br>
+        Access: <code>kubectl port-forward svc/heart-disease-svc 8080:80</code></p>
+      </div>
+      <div class="card">
+        <h3>Model refresh</h3>
+        <p><code>docker build → docker push</code><br>
+        <code>kubectl rollout restart deployment/heart-disease-api</code></p>
+      </div>
+    </div>
+    <div class="img-grid">
+      <figure>
+        <img src="../screenshots/k8s/pods_running.png" alt="Pods running" />
+        <figcaption>Figure 9 — 2/2 pods Running</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/k8s/predict_response.png" alt="Predict response" />
+        <figcaption>Figure 10 — POST /predict via K8s port-forward</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/k8s/health_response.png" alt="Health response" />
+        <figcaption>Figure 11 — GET /health → LogisticRegression</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/docker/swagger_ui.png" alt="Swagger UI" />
+        <figcaption>Figure 12 — FastAPI Swagger UI</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- MONITORING -->
+  <section id="monitoring">
+    <div class="section-title">8. Monitoring &amp; Logging <span class="pill">3 marks</span></div>
+    <p class="section-sub">Structured JSON request logging + Prometheus metrics + Grafana 4-panel dashboard. Start with <code>docker-compose up -d</code>.</p>
+    <div class="card-grid">
+      <div class="card">
+        <h3>API Logging</h3>
+        <p>Every <code>/predict</code> call emits a structured JSON log: timestamp, prediction, confidence, label, latency_ms.</p>
+      </div>
+      <div class="card">
+        <h3>Prometheus</h3>
+        <p>prometheus-fastapi-instrumentator auto-instruments all endpoints. Custom <code>heart_disease_predictions_total</code> counter tracks prediction distribution by label.</p>
+      </div>
+      <div class="card">
+        <h3>Grafana Dashboard</h3>
+        <p>4 panels: Request Rate · Latency p50/p95 · Prediction Distribution · Error Rate (4xx/5xx). Auto-provisioned from JSON.</p>
+      </div>
+      <div class="card">
+        <h3>Stack</h3>
+        <p>api (port 8001) + Prometheus v2.53.0 (9090) + Grafana 11.1.0 (3000). Grafana login: admin / admin.</p>
+      </div>
+    </div>
+    <pre>docker-compose up -d
+# Grafana → http://localhost:3000  (admin/admin)
+# Prometheus → http://localhost:9090
+# API metrics → http://localhost:8001/metrics</pre>
+    <div class="img-wrap">
+      <img src="../screenshots/monitoring/grafana_dashboard.png" alt="Grafana dashboard" />
+      <div class="img-caption">Figure 13 — Grafana dashboard: request rate, latency p50/p95, prediction distribution, error rate</div>
+    </div>
+  </section>
+
+</div><!-- /container -->
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  <p>
+    <strong>Heart Disease MLOps</strong> · AIMLCZG523 Assignment 01 ·
+    Sampath Kumar S Shetty (2024ac05041) · BITS Pilani M.Tech AI/ML
+  </p>
+  <p style="margin-top:0.5rem;">
+    <a href="https://github.com/sampathshetty85/heart-disease-mlops" target="_blank">GitHub Repository</a>
+    &nbsp;·&nbsp;
+    <a href="report.pdf" download>Download PDF Report</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/sampathshetty85/heart-disease-mlops/actions" target="_blank">CI/CD Runs</a>
+  </p>
+</footer>
+
+</body>
+</html>

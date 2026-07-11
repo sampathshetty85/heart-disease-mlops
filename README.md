@@ -8,6 +8,8 @@ End-to-end MLOps pipeline for heart disease prediction — BITS Pilani AIMLCZG52
 | **Student ID** | 2024ac05041 |
 | **Course** | AIMLCZG523 — Machine Learning Operations |
 | **Institution** | BITS Pilani (M.Tech AI/ML) |
+| **Documentation** | https://sampathshetty85.github.io/heart-disease-mlops/ |
+| **Report (PDF)** | [docs/report.pdf](docs/report.pdf) |
 
 ## Problem Statement
 
@@ -137,3 +139,19 @@ Accepts patient data, returns prediction and confidence score.
 ## Build Progress
 
 See [build_plan.md](../build_plan.md) for task checklist and [build_log.md](../build_log.md) for phase-by-phase log.
+
+## Video Demo
+
+To record a pipeline demo:
+1. Start the monitoring stack: `docker-compose up -d`
+2. Open Grafana at `http://localhost:3000`
+3. Send predictions: `curl -X POST http://localhost:8001/predict -H "Content-Type: application/json" -d '<json>'`
+4. Screen-record: docker build → container run → /predict → K8s pods → Grafana dashboard
+5. Upload to YouTube/Google Drive and add link to this README.
+
+## Documentation
+
+Full project documentation is available at:
+**https://sampathshetty85.github.io/heart-disease-mlops/**
+
+PDF Report: [docs/report.pdf](docs/report.pdf)
