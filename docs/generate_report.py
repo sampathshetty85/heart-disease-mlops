@@ -233,7 +233,9 @@ def build():
         Paragraph("Quick Start — 3 Steps (Docker)", H3),
         Paragraph(
             "Clone the repository, build the image, and run the container. "
-            "That is all. The build step runs the full pipeline automatically.", BODY),
+            "That is all. The build step runs the full pipeline automatically. "
+            "The pre-built image is also publicly available on Docker Hub at "
+            "sampathi348975/heart-disease-mlops.", BODY),
         Spacer(1, 0.25*cm),
 
         Paragraph("Step 1 — Clone the repository", H3),
