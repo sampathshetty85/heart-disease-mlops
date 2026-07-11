@@ -229,37 +229,59 @@ def build():
         Paragraph(
             "Docker Desktop is the only hard requirement. "
             "Python, pip, and all dependencies are handled inside the container.", BODY),
-        Spacer(1, 0.2*cm),
+        Spacer(1, 0.3*cm),
         Paragraph("Quick Start — 3 Steps (Docker)", H3),
         Paragraph(
             "Clone the repository, build the image, and run the container. "
             "That is all. The build step runs the full pipeline automatically.", BODY),
-        Spacer(1, 0.1*cm),
-        Paragraph("# Step 1 — Clone", CODE),
+        Spacer(1, 0.25*cm),
+
+        Paragraph("Step 1 — Clone the repository", H3),
+        Paragraph("Download the project to your local machine.", BODY),
         Paragraph("git clone https://github.com/sampathshetty85/heart-disease-mlops.git", CODE),
         Paragraph("cd heart-disease-mlops", CODE),
-        Spacer(1, 0.1*cm),
-        Paragraph("# Step 2 — Build  (downloads data, trains model, packages — all automatic)", CODE),
+        Spacer(1, 0.2*cm),
+
+        Paragraph("Step 2 — Build the Docker image", H3),
+        Paragraph(
+            "This single command runs the full pipeline automatically — installs all dependencies, "
+            "downloads the Heart Disease UCI dataset, cleans and preprocesses the data, trains "
+            "Logistic Regression, Random Forest, and XGBoost models, then packages the best one. "
+            "Takes 3–5 minutes on first run. Subsequent builds are faster due to Docker layer caching.", BODY),
         Paragraph("docker build -t heart-disease-api .", CODE),
-        Spacer(1, 0.1*cm),
-        Paragraph("# Step 3 — Run  (API starts instantly — model already baked into image)", CODE),
+        Spacer(1, 0.2*cm),
+
+        Paragraph("Step 3 — Run the container", H3),
+        Paragraph(
+            "The API starts immediately. The model is already baked into the image — "
+            "no training happens at startup.", BODY),
         Paragraph("docker run -p 8000:8000 heart-disease-api", CODE),
-        Spacer(1, 0.1*cm),
-        Paragraph("# Test it (new terminal)", CODE),
+        Spacer(1, 0.2*cm),
+
+        Paragraph("Test it (open a new terminal)", H3),
+        Paragraph(
+            "Run the commands below, or open http://localhost:8000/docs "
+            "for the interactive Swagger UI.", BODY),
         Paragraph("curl http://localhost:8000/health", CODE),
         Paragraph('curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \\', CODE),
         Paragraph('  -d \'{"age":52,"sex":1,"cp":0,"trestbps":125,"chol":212,"fbs":0,', CODE),
         Paragraph('        "restecg":1,"thalach":168,"exang":0,"oldpeak":1.0,"slope":2,"ca":2,"thal":3}\'', CODE),
-        Spacer(1, 0.2*cm),
+        Spacer(1, 0.25*cm),
+
         Paragraph("Optional — Full Monitoring Stack (API + Prometheus + Grafana)", H3),
-        Paragraph("docker-compose up -d   # API: 8000  Prometheus: 9090  Grafana: 3000 (admin/admin)", CODE),
-        Spacer(1, 0.3*cm),
+        Paragraph(
+            "Starts all three services together. Grafana dashboard is pre-configured "
+            "at localhost:3000 (login: admin / admin).", BODY),
+        Paragraph("docker-compose up -d", CODE),
+        Spacer(1, 0.2*cm),
+
         Paragraph("Optional — Kubernetes (Minikube)", H3),
         Paragraph("minikube start --driver=docker", CODE),
         Paragraph("kubectl apply -f k8s/deployment.yaml", CODE),
         Paragraph("kubectl apply -f k8s/service.yaml", CODE),
         Paragraph("kubectl port-forward svc/heart-disease-svc 8080:80", CODE),
         Spacer(1, 0.3*cm),
+
         Paragraph("CI/CD", H3),
         Paragraph(
             "Every push to main triggers GitHub Actions (ci.yml). "
