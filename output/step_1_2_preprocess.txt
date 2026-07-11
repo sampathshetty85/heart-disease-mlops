@@ -1,0 +1,55 @@
+============================================================
+Validation Report: step_1_2_preprocess
+Generated : 2026-07-11T07:13:18Z
+============================================================
+
+STEP 1.2 -- Data Cleaning & Preprocessing
+
+--- Missing Value Imputation ---
+ca   : median = 0  | dtype: int64
+thal : median = 3  | dtype: int64
+Total nulls after imputation : 0  (expected 0)
+
+--- Target Binarization ---
+Column renamed  : num -> target
+Class 0 (no disease) : 164
+Class 1 (disease)    : 139
+fbs unique values    : [0, 1]  (expected [0, 1])
+
+--- Train/Test Split ---
+Strategy        : stratified, random_state=42, test_size=0.2
+X_train shape   : (242, 13)  (expected 242 x 13)
+X_test  shape   : (61, 13)   (expected 61 x 13)
+y_train shape   : (242,)  (expected 242 x 1)
+y_test  shape   : (61,)   (expected 61 x 1)
+Overall disease rate : 45.9%
+Train   disease rate : 45.9%  (diff: 0.01%)
+Test    disease rate : 45.9%  (diff: 0.03%)
+Stratification check : PASS
+
+--- Output Files ---
+heart_cleaned.csv     : (303, 14)  committed to repo
+X_train.csv           : (242, 13)  gitignored
+X_test.csv            : (61, 13)   gitignored
+y_train.csv           : (242,)  gitignored
+y_test.csv            : (61,)   gitignored
+feature_columns.json  : 13 features  gitignored
+feature_columns order : ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal']
+
+--- Assertions ---
+no nulls post-impute           : PASS
+ca dtype == int                : PASS
+thal dtype == int              : PASS
+fbs is clean binary            : PASS
+target is binary {0,1}         : PASS
+heart_cleaned row count == 303 : PASS
+X_train rows == 242            : PASS
+X_test rows  == 61             : PASS
+stratification within 2%       : PASS
+all 6 output files exist       : PASS
+
+Status : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================

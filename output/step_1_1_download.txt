@@ -1,0 +1,26 @@
+============================================================
+Validation Report: step_1_1_download
+Generated : 2026-07-11T07:13:16Z
+============================================================
+
+STEP 1.1 — Dataset Download
+
+Source       : UCI Machine Learning Repository (id=45)
+Dataset      : Heart Disease UCI
+
+Rows         : 303   (expected 303)
+Columns      : 14   (expected 14)
+Column names : ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'num']
+
+Missing values:
+  ca      : 4 missing
+  thal    : 2 missing
+
+Shape check  : PASS
+File saved   : data/raw/heart.csv
+
+Status       : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================

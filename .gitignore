@@ -8,6 +8,9 @@ data/processed/feature_columns.json
 
 # heart_cleaned.csv is intentionally committed — required deliverable per assignment spec
 
+# output/ is intentionally committed — validation reports for evaluator review
+# Reports are regenerated dynamically at docker build time
+
 # Trained model artifacts (top-level only — not src/models/)
 /models/
 
