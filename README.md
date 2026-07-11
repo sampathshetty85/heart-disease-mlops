@@ -30,7 +30,7 @@ Binary classifier predicting presence/absence of heart disease using the [Heart 
 
 ## Quick Start
 
-Everything runs inside Docker — no Python or pip setup needed on your machine.
+Everything runs inside Docker — no Python or pip setup needed on your machine. The pre-built image is publicly available on Docker Hub at [`sampathi348975/heart-disease-mlops`](https://hub.docker.com/r/sampathi348975/heart-disease-mlops).
 
 ### 1. Clone the repo
 ```bash
