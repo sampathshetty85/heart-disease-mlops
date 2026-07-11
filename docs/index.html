@@ -13,6 +13,7 @@
 <nav>
   <span class="brand">❤️ Heart Disease MLOps</span>
   <div class="nav-links">
+    <a href="#quickstart">Quick Start</a>
     <a href="#overview">Overview</a>
     <a href="#pipeline">Pipeline</a>
     <a href="#eda">EDA</a>
@@ -54,6 +55,64 @@
   <div class="stat"><span class="stat-value">2</span><div class="stat-label">K8s Replicas Running</div></div>
   <div class="stat"><span class="stat-value">4</span><div class="stat-label">Grafana Panels</div></div>
   <div class="stat"><span class="stat-value">10</span><div class="stat-label">CI Steps Passing</div></div>
+</div>
+
+<!-- ── QUICK START ────────────────────────────────────────────── -->
+<div class="container">
+  <section id="quickstart">
+    <div class="section-title">Quick Start <span class="pill">3 steps</span></div>
+    <p class="section-sub">Everything runs inside Docker. No Python or pip setup needed on your machine.</p>
+
+    <div class="pipeline" style="margin-bottom:1.5rem;">
+      <div class="pipe-step"><span class="dot"></span> git clone</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="dot"></span> docker build</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><span class="dot"></span> docker run</div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="color:var(--green)"><span class="dot"></span> API live</div>
+    </div>
+
+    <div class="card-grid" style="margin-bottom:1.5rem;">
+      <div class="card">
+        <h3>Step 1 — Clone</h3>
+        <pre style="margin:0;">git clone https://github.com/sampathshetty85/heart-disease-mlops.git
+cd heart-disease-mlops</pre>
+      </div>
+      <div class="card">
+        <h3>Step 2 — Build</h3>
+        <pre style="margin:0;">docker build -t heart-disease-api .</pre>
+        <p style="margin-top:0.6rem;font-size:0.85rem;color:var(--muted);">This one command installs dependencies, downloads the dataset, preprocesses it, trains the models, and packages the best one — all automatically. Takes 3–5 minutes on first run.</p>
+      </div>
+      <div class="card">
+        <h3>Step 3 — Run</h3>
+        <pre style="margin:0;">docker run -p 8000:8000 heart-disease-api</pre>
+        <p style="margin-top:0.6rem;font-size:0.85rem;color:var(--muted);">The API starts instantly. The model is already baked into the image — no training happens at startup.</p>
+      </div>
+    </div>
+
+    <p style="margin-bottom:0.6rem;font-size:0.9rem;">Test it (open a new terminal):</p>
+    <pre># Health check
+curl http://localhost:8000/health
+
+# Predict — no heart disease likely
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"age":52,"sex":1,"cp":0,"trestbps":125,"chol":212,"fbs":0,"restecg":1,"thalach":168,"exang":0,"oldpeak":1.0,"slope":2,"ca":2,"thal":3}'
+
+# Predict — heart disease likely
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}'</pre>
+
+    <p style="margin-top:0.8rem;font-size:0.9rem;">Or open <a href="http://localhost:8000/docs" target="_blank">http://localhost:8000/docs</a> for the interactive Swagger UI.</p>
+
+    <p style="margin-top:1rem;font-size:0.9rem;"><strong>Optional — full monitoring stack (API + Prometheus + Grafana):</strong></p>
+    <pre>docker-compose up -d
+# API → http://localhost:8000/docs
+# Prometheus → http://localhost:9090
+# Grafana → http://localhost:3000  (login: admin / admin)</pre>
+  </section>
 </div>
 
 <!-- ── MAIN CONTENT ───────────────────────────────────────────── -->

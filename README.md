@@ -30,56 +30,66 @@ Binary classifier predicting presence/absence of heart disease using the [Heart 
 
 ## Quick Start
 
-### 1. Install dependencies
+Everything runs inside Docker — no Python or pip setup needed on your machine.
+
+### 1. Clone the repo
 ```bash
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+git clone https://github.com/sampathshetty85/heart-disease-mlops.git
+cd heart-disease-mlops
 ```
 
-### 2. Download dataset
-```bash
-python src/data/download.py
-```
-
-### 3. Preprocess data
-```bash
-python src/data/preprocess.py
-```
-
-### 4. Train models
-```bash
-python src/models/train.py
-```
-
-### 5. Launch MLflow UI
-```bash
-mlflow ui
-# open http://localhost:5000
-```
-
-### 6. Run API locally
-```bash
-uvicorn src.api.main:app --reload --port 8000
-# open http://localhost:8000/docs
-```
-
-### 7. Run tests
-```bash
-pytest tests/ -v
-```
-
-### 8. Build and run Docker container
+### 2. Build the Docker image
 ```bash
 docker build -t heart-disease-api .
+```
+
+This single command runs the full pipeline automatically, in order:
+- Installs all Python dependencies
+- Downloads the Heart Disease UCI dataset from UCI ML Repository
+- Cleans and preprocesses the data
+- Trains Logistic Regression, Random Forest, and XGBoost models
+- Packages the best model (Logistic Regression, ROC-AUC 0.963) for serving
+
+Takes 3–5 minutes on first build. Subsequent builds are faster due to Docker layer caching.
+
+### 3. Run the container
+```bash
 docker run -p 8000:8000 heart-disease-api
 ```
 
-### 9. Deploy to Kubernetes (Minikube)
+The API starts immediately — the model is already baked into the image. No training happens at startup.
+
+**Test it (open a new terminal):**
 ```bash
-minikube start
-kubectl apply -f k8s/
-minikube service heart-disease-api --url
+# Health check
+curl http://localhost:8000/health
+
+# Prediction — no heart disease likely
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"age":52,"sex":1,"cp":0,"trestbps":125,"chol":212,"fbs":0,"restecg":1,"thalach":168,"exang":0,"oldpeak":1.0,"slope":2,"ca":2,"thal":3}'
+
+# Prediction — heart disease likely
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}'
+```
+
+Or open **http://localhost:8000/docs** for the interactive Swagger UI.
+
+### Optional — Run with monitoring (Prometheus + Grafana)
+```bash
+docker-compose up -d
+```
+
+| Service | URL | Login |
+|---------|-----|-------|
+| API | http://localhost:8000/docs | — |
+| Prometheus | http://localhost:9090 | — |
+| Grafana | http://localhost:3000 | admin / admin |
+
+```bash
+docker-compose down   # to stop
 ```
 
 ## Project Structure
