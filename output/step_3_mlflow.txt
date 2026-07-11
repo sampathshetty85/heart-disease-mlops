@@ -1,0 +1,60 @@
+============================================================
+Validation Report: step_3_mlflow
+Generated : 2026-07-11T08:17:09Z
+============================================================
+
+STEP 3 -- MLflow Experiment Tracking
+
+Experiment name : heart-disease-mlops
+Experiment ID   : 460772888299597753
+Tracking URI    : /Users/I348975/Library/CloudStorage/OneDrive-SAPSE/Personal Documents/BITS Pilani-Mtech in AI : ML/Sem-3/MLOps/MLOps Assignment/heart-disease-mlops/src/models/../../mlruns
+
+--- Runs ---
+
+Run: logistic_regression
+  run_id      : e4abcc6349dd4254ac77172fbd19d08c
+  best_model  : true
+  cv_roc_auc  : 0.9026 +/- 0.0162
+  cv_f1       : 0.8252 +/- 0.0171
+  test_acc    : 0.8689
+  test_prec   : 0.8333
+  test_recall : 0.8929
+  test_f1     : 0.8621
+  test_auc    : 0.9632
+  artifacts   : roc_curves.png, confusion_matrices.png, model/
+
+Run: random_forest
+  run_id      : 3f3b2fc0795b48f886ef10886275a559
+  best_model  : false
+  cv_roc_auc  : 0.8845 +/- 0.0270
+  cv_f1       : 0.7614 +/- 0.0221
+  test_acc    : 0.8689
+  test_prec   : 0.8333
+  test_recall : 0.8929
+  test_f1     : 0.8621
+  test_auc    : 0.9481
+  artifacts   : roc_curves.png, confusion_matrices.png, model/
+
+Run: xgboost
+  run_id      : ec91c4a1867644a7b1abba1e74744513
+  best_model  : false
+  cv_roc_auc  : 0.8690 +/- 0.0188
+  cv_f1       : 0.7498 +/- 0.0247
+  test_acc    : 0.8852
+  test_prec   : 0.8621
+  test_recall : 0.8929
+  test_f1     : 0.8772
+  test_auc    : 0.9383
+  artifacts   : roc_curves.png, confusion_matrices.png, model/
+
+--- Best Run Summary ---
+Model       : Logistic Regression
+run_id      : e4abcc6349dd4254ac77172fbd19d08c
+CV ROC-AUC  : 0.9026
+Test ROC-AUC: 0.9632
+
+Status : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================

@@ -1,5 +1,5 @@
 """
-train.py -- Phase 2: Feature Engineering & Model Development.
+train.py -- Phase 2 & 3: Feature Engineering, Model Development & MLflow Tracking.
 
 PIPELINE DESIGN
 - ColumnTransformer wraps two transformers applied to feature subsets:
@@ -46,6 +46,9 @@ from sklearn.metrics import (
     f1_score, roc_auc_score, confusion_matrix, roc_curve
 )
 import xgboost as xgb
+import mlflow
+import mlflow.sklearn
+import mlflow.models
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from data.preprocess import NUMERIC_FEATURES, CATEGORICAL_FEATURES
@@ -59,6 +62,8 @@ REPO_ROOT  = os.path.join(BASE_DIR, "..", "..")
 DATA_DIR   = os.path.join(REPO_ROOT, "data", "processed")
 MODELS_DIR = os.path.join(REPO_ROOT, "models")
 SHOTS_DIR  = os.path.join(REPO_ROOT, "screenshots", "eda")
+MLFLOW_DIR = os.path.join(REPO_ROOT, "mlruns")
+MLFLOW_EXPERIMENT = "heart-disease-mlops"
 
 CV = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
@@ -337,10 +342,122 @@ def _write_report(results, best_name, best_params, cv_map, model_size, pipeline_
 
 
 # ---------------------------------------------------------------------------
+# I -- MLflow run logger (Phase 3)
+# ---------------------------------------------------------------------------
+def log_run(run_name, pipeline, params, cv, test_metrics,
+            artifact_paths, X_train, is_best):
+    """Log one model's full results as an MLflow run. Returns the run_id."""
+    with mlflow.start_run(run_name=run_name) as run:
+        # Strip 'classifier__' prefix so param names are readable in the UI
+        clean_params = {k.replace("classifier__", ""): v for k, v in params.items()}
+        mlflow.log_params(clean_params)
+
+        # CV metrics
+        mlflow.log_metric("cv_roc_auc_mean", round(cv["roc_auc_mean"], 6))
+        mlflow.log_metric("cv_roc_auc_std",  round(cv["roc_auc_std"],  6))
+        mlflow.log_metric("cv_f1_mean",       round(cv["f1_mean"],      6))
+        mlflow.log_metric("cv_f1_std",        round(cv["f1_std"],       6))
+        mlflow.log_metric("cv_acc_mean",      round(cv["acc_mean"],     6))
+
+        # Test-set metrics
+        mlflow.log_metric("test_accuracy",   round(test_metrics["accuracy"],  6))
+        mlflow.log_metric("test_precision",  round(test_metrics["precision"], 6))
+        mlflow.log_metric("test_recall",     round(test_metrics["recall"],    6))
+        mlflow.log_metric("test_f1",         round(test_metrics["f1"],        6))
+        mlflow.log_metric("test_roc_auc",    round(test_metrics["roc_auc"],   6))
+
+        # Plot artifacts
+        for path in artifact_paths:
+            if os.path.exists(path):
+                mlflow.log_artifact(path)
+
+        # Model with input schema (Gap 31)
+        signature = mlflow.models.infer_signature(
+            X_train, pipeline.predict(X_train)
+        )
+        mlflow.sklearn.log_model(
+            pipeline,
+            artifact_path="model",
+            input_example=X_train.iloc[:5],
+            signature=signature,
+        )
+
+        # Tags
+        mlflow.set_tag("model_name",  run_name)
+        mlflow.set_tag("best_model",  "true" if is_best else "false")
+
+        run_id = run.info.run_id
+        print(f"  MLflow run logged: {run_name}  run_id={run_id[:8]}...  best={is_best}")
+        return run_id
+
+
+# ---------------------------------------------------------------------------
+# J -- MLflow output report (Phase 3)
+# ---------------------------------------------------------------------------
+def _write_mlflow_report(run_ids, cv_map, results, best_name):
+    experiment = mlflow.get_experiment_by_name(MLFLOW_EXPERIMENT)
+    exp_id = experiment.experiment_id if experiment else "unknown"
+
+    lines = [
+        "STEP 3 -- MLflow Experiment Tracking",
+        "",
+        f"Experiment name : {MLFLOW_EXPERIMENT}",
+        f"Experiment ID   : {exp_id}",
+        f"Tracking URI    : {mlflow.get_tracking_uri()}",
+        "",
+        "--- Runs ---",
+    ]
+
+    run_key_map = {
+        "Logistic Regression": "logistic_regression",
+        "Random Forest":       "random_forest",
+        "XGBoost":             "xgboost",
+    }
+
+    for display_name, run_key in run_key_map.items():
+        run_id  = run_ids.get(run_key, "unknown")
+        cv      = cv_map[display_name]
+        metrics = results[display_name]
+        is_best = display_name == best_name
+        lines += [
+            "",
+            f"Run: {run_key}",
+            f"  run_id      : {run_id}",
+            f"  best_model  : {'true' if is_best else 'false'}",
+            f"  cv_roc_auc  : {cv['roc_auc_mean']:.4f} +/- {cv['roc_auc_std']:.4f}",
+            f"  cv_f1       : {cv['f1_mean']:.4f} +/- {cv['f1_std']:.4f}",
+            f"  test_acc    : {metrics['accuracy']:.4f}",
+            f"  test_prec   : {metrics['precision']:.4f}",
+            f"  test_recall : {metrics['recall']:.4f}",
+            f"  test_f1     : {metrics['f1']:.4f}",
+            f"  test_auc    : {metrics['roc_auc']:.4f}",
+            f"  artifacts   : roc_curves.png, confusion_matrices.png, model/",
+        ]
+
+    lines += [
+        "",
+        "--- Best Run Summary ---",
+        f"Model       : {best_name}",
+        f"run_id      : {run_ids.get(run_key_map[best_name], 'unknown')}",
+        f"CV ROC-AUC  : {cv_map[best_name]['roc_auc_mean']:.4f}",
+        f"Test ROC-AUC: {results[best_name]['roc_auc']:.4f}",
+        "",
+        "Status : COMPLETE",
+    ]
+    write_report("step_3_mlflow", lines)
+
+
+# ---------------------------------------------------------------------------
 # Orchestrator
 # ---------------------------------------------------------------------------
 def run():
     print("=== train.py ===")
+
+    # MLflow setup (Phase 3) -- REPO_ROOT anchor avoids spaces/colon in abs path
+    mlflow.set_tracking_uri(MLFLOW_DIR)
+    mlflow.set_experiment(MLFLOW_EXPERIMENT)
+    print(f"MLflow tracking URI : {mlflow.get_tracking_uri()}")
+    print(f"MLflow experiment   : {MLFLOW_EXPERIMENT}")
 
     X_train, X_test, y_train, y_test = load_splits()
 
@@ -393,8 +510,37 @@ def run():
     # Save artifacts
     _, _, model_size, pipeline_size = save_artifacts(best_pipe)
 
-    # Output report
+    # MLflow: log all 3 runs (Phase 3)
+    print("\n--- MLflow logging ---")
+    artifact_paths = [
+        os.path.join(SHOTS_DIR, "roc_curves.png"),
+        os.path.join(SHOTS_DIR, "confusion_matrices.png"),
+    ]
+    run_key_map = {
+        "Logistic Regression": "logistic_regression",
+        "Random Forest":       "random_forest",
+        "XGBoost":             "xgboost",
+    }
+    pipes   = {"Logistic Regression": lr_pipe,  "Random Forest": rf_pipe,  "XGBoost": xgb_pipe}
+    params  = {"Logistic Regression": lr_params, "Random Forest": rf_params, "XGBoost": xgb_params}
+    metrics = {"Logistic Regression": lr_metrics, "Random Forest": rf_metrics, "XGBoost": xgb_metrics}
+
+    run_ids = {}
+    for display_name, run_key in run_key_map.items():
+        run_ids[run_key] = log_run(
+            run_name=run_key,
+            pipeline=pipes[display_name],
+            params=params[display_name],
+            cv=cv_map[display_name],
+            test_metrics=metrics[display_name],
+            artifact_paths=artifact_paths,
+            X_train=X_train,
+            is_best=(display_name == best_name),
+        )
+
+    # Output reports
     _write_report(results, best_name, best_params, cv_map, model_size, pipeline_size)
+    _write_mlflow_report(run_ids, cv_map, results, best_name)
     print("train.py complete.")
 
 
