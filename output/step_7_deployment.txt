@@ -1,0 +1,66 @@
+============================================================
+Validation Report: step_7_deployment
+Generated : 2026-07-11T09:35:06Z
+============================================================
+
+STEP 7 -- Production Deployment (Kubernetes / Minikube)
+
+--- Cluster Info ---
+Platform       : Minikube v1.36.0 (docker driver)
+Kubernetes     : v1.33.1
+Minikube IP    : 192.168.49.2
+Image          : sampathi348975/heart-disease-mlops:latest
+imagePullPolicy: Always
+
+--- kubectl get deployment ---
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+heart-disease-api   2/2     2            2           5m5s
+
+--- kubectl get pods -o wide ---
+NAME                                 READY   STATUS    RESTARTS   AGE    IP           NODE       NOMINATED NODE   READINESS GATES
+heart-disease-api-6bcb6c7c5b-5j7gs   1/1     Running   0          5m5s   10.244.0.5   minikube   <none>           <none>
+heart-disease-api-6bcb6c7c5b-hlbq5   1/1     Running   0          5m5s   10.244.0.4   minikube   <none>           <none>
+Rollout status : deployment "heart-disease-api" successfully rolled out
+
+--- kubectl get svc ---
+NAME                TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+heart-disease-svc   LoadBalancer   10.106.237.173   <pending>     80:31924/TCP   5m5s
+Cluster-IP     : 10.106.237.173
+NodePort       : 31924
+Access method  : kubectl port-forward svc/heart-disease-svc 8080:80
+
+--- GET /health ---
+Request        : GET http://localhost:8080/health
+Response       : {"status":"ok","model":"LogisticRegression"}
+Status         : PASS
+
+--- POST /predict (no disease) ---
+Input          : age=63, sex=1, cp=3, trestbps=145, chol=233, fbs=1,
+                 restecg=0, thalach=150, exang=0, oldpeak=2.3, slope=0, ca=0, thal=1
+Response       : {"prediction":0,"confidence":0.9357,"label":"No Heart Disease"}
+Status         : PASS
+
+--- POST /predict (disease) ---
+Input          : age=67, sex=1, cp=4, trestbps=160, chol=286, fbs=0,
+                 restecg=2, thalach=108, exang=1, oldpeak=1.5, slope=2, ca=3, thal=3
+Response       : {"prediction":1,"confidence":0.992,"label":"Heart Disease"}
+Status         : PASS
+
+--- Model Refresh Procedure ---
+1. docker build -t sampathi348975/heart-disease-mlops:latest .
+2. docker push sampathi348975/heart-disease-mlops:latest
+3. kubectl rollout restart deployment/heart-disease-api
+(Pods are replaced with fresh image; zero downtime with 2 replicas)
+
+--- Screenshots ---
+screenshots/k8s/pods_running.png   : kubectl get pods (2/2 Running)
+screenshots/k8s/service.png        : kubectl get svc (LoadBalancer)
+screenshots/k8s/predict_response.png : /predict response from K8s
+screenshots/k8s/swagger_k8s.png    : FastAPI Swagger UI on K8s
+screenshots/k8s/health_response.png: /health response on K8s
+
+Status : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================
