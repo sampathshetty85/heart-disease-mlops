@@ -25,7 +25,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from report_writer import write_report
+from report_writer import write_report  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Paths -- anchored to __file__ so script is working-directory-agnostic
@@ -174,13 +174,13 @@ def _write_validation_report(df_imputed, X, y, X_train, X_test, y_train, y_test,
         f"Total nulls after imputation : {df_imputed.isnull().sum().sum()}  (expected 0)",
         "",
         "--- Target Binarization ---",
-        f"Column renamed  : num -> target",
+        "Column renamed  : num -> target",
         f"Class 0 (no disease) : {(y == 0).sum()}",
         f"Class 1 (disease)    : {(y == 1).sum()}",
         f"fbs unique values    : {sorted(df_imputed['fbs'].unique())}  (expected [0, 1])",
         "",
         "--- Train/Test Split ---",
-        f"Strategy        : stratified, random_state=42, test_size=0.2",
+        "Strategy        : stratified, random_state=42, test_size=0.2",
         f"X_train shape   : {X_train.shape}  (expected 242 x 13)",
         f"X_test  shape   : {X_test.shape}   (expected 61 x 13)",
         f"y_train shape   : {y_train.shape}  (expected 242 x 1)",
@@ -188,7 +188,8 @@ def _write_validation_report(df_imputed, X, y, X_train, X_test, y_train, y_test,
         f"Overall disease rate : {overall_ratio:.1f}%",
         f"Train   disease rate : {train_ratio:.1f}%  (diff: {abs(train_ratio - overall_ratio):.2f}%)",
         f"Test    disease rate : {test_ratio:.1f}%  (diff: {abs(test_ratio - overall_ratio):.2f}%)",
-        f"Stratification check : {'PASS' if abs(train_ratio - overall_ratio) < 2 and abs(test_ratio - overall_ratio) < 2 else 'FAIL'}",
+        f"Stratification check : "
+        f"{'PASS' if abs(train_ratio - overall_ratio) < 2 and abs(test_ratio - overall_ratio) < 2 else 'FAIL'}",
         "",
         "--- Output Files ---",
         f"heart_cleaned.csv     : {df_cleaned.shape}  committed to repo",

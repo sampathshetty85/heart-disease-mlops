@@ -1,1 +1,53 @@
-# Implemented in Phase 5
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint (flake8)
+        run: flake8 src/ tests/ --max-line-length=120 --statistics
+
+      - name: Download dataset
+        run: python src/data/download.py
+
+      - name: Preprocess data
+        run: python src/data/preprocess.py
+
+      - name: Train models
+        run: python src/models/train.py
+
+      - name: Run unit tests
+        run: pytest tests/ -v --tb=short
+
+      - name: Upload pipeline reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pipeline-reports
+          path: output/

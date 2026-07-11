@@ -13,13 +13,12 @@ Note: models/pipeline.joblib is generated at docker build time by train.py.
 """
 
 import os
-import sys
 import json
 import pandas as pd
 import joblib
 
-BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT     = os.path.join(BASE_DIR, "..", "..")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.join(BASE_DIR, "..", "..")
 PIPELINE_PATH = os.path.join(REPO_ROOT, "models", "pipeline.joblib")
 FEAT_COLS_PATH = os.path.join(REPO_ROOT, "data", "processed", "feature_columns.json")
 
@@ -61,14 +60,14 @@ def predict(input_dict: dict) -> dict:
 
     df = pd.DataFrame([input_dict])[feature_columns]
 
-    prediction  = int(pipeline.predict(df)[0])
-    confidence  = float(pipeline.predict_proba(df)[0][prediction])
-    label       = "Heart Disease" if prediction == 1 else "No Heart Disease"
+    prediction = int(pipeline.predict(df)[0])
+    confidence = float(pipeline.predict_proba(df)[0][prediction])
+    label = "Heart Disease" if prediction == 1 else "No Heart Disease"
 
     return {
         "prediction": prediction,
         "confidence": round(confidence, 4),
-        "label":      label,
+        "label": label,
     }
 
 

@@ -21,23 +21,23 @@ import re
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
 
-import joblib
+import joblib  # noqa: E402
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from report_writer import write_report
+from report_writer import write_report  # noqa: E402
 
-BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT     = os.path.join(BASE_DIR, "..", "..")
-MODELS_DIR    = os.path.join(REPO_ROOT, "models")
-DATA_DIR      = os.path.join(REPO_ROOT, "data", "processed")
-REQUIREMENTS  = os.path.join(REPO_ROOT, "requirements.txt")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.join(BASE_DIR, "..", "..")
+MODELS_DIR = os.path.join(REPO_ROOT, "models")
+DATA_DIR = os.path.join(REPO_ROOT, "data", "processed")
+REQUIREMENTS = os.path.join(REPO_ROOT, "requirements.txt")
 
-MODEL_PATH    = os.path.join(MODELS_DIR, "model.joblib")
+MODEL_PATH = os.path.join(MODELS_DIR, "model.joblib")
 PIPELINE_PATH = os.path.join(MODELS_DIR, "pipeline.joblib")
-FEAT_COLS     = os.path.join(DATA_DIR, "feature_columns.json")
+FEAT_COLS = os.path.join(DATA_DIR, "feature_columns.json")
 
 # Best MLflow run ID (logistic_regression, best_model=true)
-MLFLOW_RUN_ID  = "e4abcc6349dd4254ac77172fbd19d08c"
+MLFLOW_RUN_ID = "e4abcc6349dd4254ac77172fbd19d08c"
 MLFLOW_MODEL_URI = f"runs:/{MLFLOW_RUN_ID}/model"
 
 SAMPLE_INPUT = {
@@ -63,7 +63,7 @@ def check_artifacts():
     pipeline = results["pipeline.joblib"]["obj"]
     assert hasattr(pipeline, "named_steps"), "pipeline.joblib is not a sklearn Pipeline"
     assert "preprocessor" in pipeline.named_steps, "Pipeline missing 'preprocessor' step"
-    assert "classifier"   in pipeline.named_steps, "Pipeline missing 'classifier' step"
+    assert "classifier" in pipeline.named_steps, "Pipeline missing 'classifier' step"
     print(f"  Pipeline steps         : {list(pipeline.named_steps.keys())}")
 
     model = results["model.joblib"]["obj"]
@@ -135,18 +135,18 @@ def smoke_test_inference():
     result = predict(SAMPLE_INPUT)
 
     assert isinstance(result, dict),                  "predict() must return a dict"
-    assert "prediction"  in result,                   "missing key: prediction"
-    assert "confidence"  in result,                   "missing key: confidence"
-    assert "label"       in result,                   "missing key: label"
+    assert "prediction" in result,                   "missing key: prediction"
+    assert "confidence" in result,                   "missing key: confidence"
+    assert "label" in result,                   "missing key: label"
     assert result["prediction"] in (0, 1),            f"prediction not 0/1: {result['prediction']}"
     assert 0.0 <= result["confidence"] <= 1.0,        f"confidence out of range: {result['confidence']}"
     assert result["label"] in ("Heart Disease", "No Heart Disease"), \
         f"unexpected label: {result['label']}"
 
-    print(f"  Input      : age=63, sex=1, cp=3, trestbps=145, chol=233, ...")
+    print("  Input      : age=63, sex=1, cp=3, trestbps=145, chol=233, ...")
     print(f"  Output     : prediction={result['prediction']}  "
           f"confidence={result['confidence']}  label={result['label']}")
-    print(f"  Status     : PASS")
+    print("  Status     : PASS")
     return result
 
 
@@ -163,7 +163,7 @@ def check_determinism():
 
     print(f"  Run 1      : prediction={r1['prediction']}  confidence={r1['confidence']}")
     print(f"  Run 2      : prediction={r2['prediction']}  confidence={r2['confidence']}")
-    print(f"  Match      : PASS")
+    print("  Match      : PASS")
     return r1, r2
 
 
@@ -171,13 +171,13 @@ def check_determinism():
 # E -- Output report
 # ---------------------------------------------------------------------------
 def _write_report(artifact_results, feat_cols, audits, smoke_result, det_r1, det_r2):
-    model_size    = artifact_results["model.joblib"]["size"]
+    model_size = artifact_results["model.joblib"]["size"]
     pipeline_size = artifact_results["pipeline.joblib"]["size"]
-    pipeline_obj  = artifact_results["pipeline.joblib"]["obj"]
-    model_obj     = artifact_results["model.joblib"]["obj"]
+    pipeline_obj = artifact_results["pipeline.joblib"]["obj"]
+    model_obj = artifact_results["model.joblib"]["obj"]
 
-    fails  = [a for a in audits if a["status"] == "FAIL"]
-    warns  = [a for a in audits if "WARN" in a["status"]]
+    fails = [a for a in audits if a["status"] == "FAIL"]
+    warns = [a for a in audits if "WARN" in a["status"]]
     passes = [a for a in audits if a["status"] == "PASS"]
 
     lines = [
@@ -190,7 +190,7 @@ def _write_report(artifact_results, feat_cols, audits, smoke_result, det_r1, det
         f"Model type               : {type(model_obj).__name__}",
         f"MLflow model URI         : {MLFLOW_MODEL_URI}",
         f"feature_columns.json     : {len(feat_cols)} features  status=EXISTS",
-        f"Serialization format     : joblib (sklearn-compatible, Python 3.12)",
+        "Serialization format     : joblib (sklearn-compatible, Python 3.12)",
         "",
         f"--- Requirements Audit ({len(audits)} packages) ---",
     ]
@@ -205,14 +205,14 @@ def _write_report(artifact_results, feat_cols, audits, smoke_result, det_r1, det
         "",
         "--- Smoke Test ---",
         f"  Input  : {SAMPLE_INPUT}",
-        f"  Output : prediction={smoke_result['prediction']}  "
-          f"confidence={smoke_result['confidence']}  label={smoke_result['label']}",
-        f"  Status : PASS",
+        f"  Output : prediction={smoke_result['prediction']} "
+        f"confidence={smoke_result['confidence']}  label={smoke_result['label']}",
+        "  Status : PASS",
         "",
         "--- Determinism Check ---",
         f"  Run 1  : prediction={det_r1['prediction']}  confidence={det_r1['confidence']}",
         f"  Run 2  : prediction={det_r2['prediction']}  confidence={det_r2['confidence']}",
-        f"  Match  : PASS",
+        "  Match  : PASS",
         "",
         "--- Docker Proof ---",
         "  Docker build/test proof: see Phase 6 -- output/step_6_api.txt",

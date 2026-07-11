@@ -4,7 +4,7 @@ import pandas as pd
 from ucimlrepo import fetch_ucirepo
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from report_writer import write_report
+from report_writer import write_report  # noqa: E402
 
 RAW_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "raw")
 OUTPUT_PATH = os.path.join(RAW_DIR, "heart.csv")

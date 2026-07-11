@@ -6,7 +6,7 @@ PIPELINE DESIGN
     StandardScaler    -> NUMERIC_FEATURES  (age, trestbps, chol, thalach, oldpeak)
     OneHotEncoder     -> CATEGORICAL_FEATURES
         drop='first'          : removes one dummy per feature to prevent multicollinearity
-                                in Logistic Regression; harmless for tree-based models.
+ in Logistic Regression; harmless for tree-based models.
         handle_unknown='ignore': silently zero-fills unseen categories at API inference
                                  so the serving pipeline never crashes on novel inputs.
 - A single shared preprocessor is used for all three models.
@@ -26,42 +26,41 @@ import json
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="sklearn")
 
-import numpy as np
-import pandas as pd
-import joblib
-import matplotlib
+import pandas as pd  # noqa: E402
+import joblib  # noqa: E402
+import matplotlib  # noqa: E402
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # noqa: E402
 
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import (
+from sklearn.pipeline import Pipeline  # noqa: E402
+from sklearn.compose import ColumnTransformer  # noqa: E402
+from sklearn.preprocessing import StandardScaler, OneHotEncoder  # noqa: E402
+from sklearn.linear_model import LogisticRegression  # noqa: E402
+from sklearn.ensemble import RandomForestClassifier  # noqa: E402
+from sklearn.model_selection import (  # noqa: E402
     GridSearchCV, RandomizedSearchCV, StratifiedKFold, cross_validate
 )
-from sklearn.metrics import (
+from sklearn.metrics import (  # noqa: E402
     accuracy_score, precision_score, recall_score,
     f1_score, roc_auc_score, confusion_matrix, roc_curve
 )
-import xgboost as xgb
-import mlflow
-import mlflow.sklearn
-import mlflow.models
+import xgboost as xgb  # noqa: E402
+import mlflow  # noqa: E402
+import mlflow.sklearn  # noqa: E402
+import mlflow.models  # noqa: E402
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from data.preprocess import NUMERIC_FEATURES, CATEGORICAL_FEATURES
-from report_writer import write_report
+from data.preprocess import NUMERIC_FEATURES, CATEGORICAL_FEATURES  # noqa: E402
+from report_writer import write_report  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT  = os.path.join(BASE_DIR, "..", "..")
-DATA_DIR   = os.path.join(REPO_ROOT, "data", "processed")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.join(BASE_DIR, "..", "..")
+DATA_DIR = os.path.join(REPO_ROOT, "data", "processed")
 MODELS_DIR = os.path.join(REPO_ROOT, "models")
-SHOTS_DIR  = os.path.join(REPO_ROOT, "screenshots", "eda")
+SHOTS_DIR = os.path.join(REPO_ROOT, "screenshots", "eda")
 MLFLOW_DIR = os.path.join(REPO_ROOT, "mlruns")
 MLFLOW_EXPERIMENT = "heart-disease-mlops"
 
@@ -73,9 +72,9 @@ CV = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 # ---------------------------------------------------------------------------
 def load_splits():
     X_train = pd.read_csv(os.path.join(DATA_DIR, "X_train.csv"))
-    X_test  = pd.read_csv(os.path.join(DATA_DIR, "X_test.csv"))
+    X_test = pd.read_csv(os.path.join(DATA_DIR, "X_test.csv"))
     y_train = pd.read_csv(os.path.join(DATA_DIR, "y_train.csv")).squeeze()
-    y_test  = pd.read_csv(os.path.join(DATA_DIR, "y_test.csv")).squeeze()
+    y_test = pd.read_csv(os.path.join(DATA_DIR, "y_test.csv")).squeeze()
 
     with open(os.path.join(DATA_DIR, "feature_columns.json")) as f:
         expected_cols = json.load(f)
@@ -193,7 +192,7 @@ def cv_scores(pipeline, X_train, y_train, label):
 # E -- Test-set evaluation
 # ---------------------------------------------------------------------------
 def evaluate_on_test(pipeline, X_test, y_test, label):
-    y_pred  = pipeline.predict(X_test)
+    y_pred = pipeline.predict(X_test)
     y_proba = pipeline.predict_proba(X_test)[:, 1]
     metrics = {
         "accuracy":  accuracy_score(y_test, y_pred),
@@ -271,11 +270,11 @@ def plot_confusion_matrices(models_data, X_test, y_test):
 # ---------------------------------------------------------------------------
 def save_artifacts(best_pipeline):
     os.makedirs(MODELS_DIR, exist_ok=True)
-    model_path    = os.path.join(MODELS_DIR, "model.joblib")
+    model_path = os.path.join(MODELS_DIR, "model.joblib")
     pipeline_path = os.path.join(MODELS_DIR, "pipeline.joblib")
     joblib.dump(best_pipeline.named_steps["classifier"], model_path)
     joblib.dump(best_pipeline, pipeline_path)
-    model_size    = os.path.getsize(model_path)
+    model_size = os.path.getsize(model_path)
     pipeline_size = os.path.getsize(pipeline_path)
     print(f"Saved: models/model.joblib    ({model_size:,} bytes)")
     print(f"Saved: models/pipeline.joblib ({pipeline_size:,} bytes)")
@@ -321,7 +320,7 @@ def _write_report(results, best_name, best_params, cv_map, model_size, pipeline_
     lines += [
         "",
         "--- Model Selection ---",
-        f"Criterion      : highest CV ROC-AUC (primary); F1 tiebreaker",
+        "Criterion      : highest CV ROC-AUC (primary); F1 tiebreaker",
         f"Best model     : {best_name}",
         f"CV ROC-AUC     : {best_cv_auc:.4f}",
         f"Best params    : {best_params}",
@@ -415,8 +414,8 @@ def _write_mlflow_report(run_ids, cv_map, results, best_name):
     }
 
     for display_name, run_key in run_key_map.items():
-        run_id  = run_ids.get(run_key, "unknown")
-        cv      = cv_map[display_name]
+        run_id = run_ids.get(run_key, "unknown")
+        cv = cv_map[display_name]
         metrics = results[display_name]
         is_best = display_name == best_name
         lines += [
@@ -431,7 +430,7 @@ def _write_mlflow_report(run_ids, cv_map, results, best_name):
             f"  test_recall : {metrics['recall']:.4f}",
             f"  test_f1     : {metrics['f1']:.4f}",
             f"  test_auc    : {metrics['roc_auc']:.4f}",
-            f"  artifacts   : roc_curves.png, confusion_matrices.png, model/",
+            "  artifacts   : roc_curves.png, confusion_matrices.png, model/",
         ]
 
     lines += [
@@ -462,22 +461,22 @@ def run():
     X_train, X_test, y_train, y_test = load_splits()
 
     # Tune all three models
-    lr_pipe,  lr_params,  lr_cv_auc  = tune_logistic(X_train, y_train)
-    rf_pipe,  rf_params,  rf_cv_auc  = tune_random_forest(X_train, y_train)
+    lr_pipe, lr_params, lr_cv_auc = tune_logistic(X_train, y_train)
+    rf_pipe, rf_params, rf_cv_auc = tune_random_forest(X_train, y_train)
     xgb_pipe, xgb_params, xgb_cv_auc = tune_xgboost(X_train, y_train)
 
     # Full CV scores
     print("\n--- Full CV scores ---")
     cv_map = {
-        "Logistic Regression": cv_scores(lr_pipe,  X_train, y_train, "Logistic Regression"),
-        "Random Forest":       cv_scores(rf_pipe,  X_train, y_train, "Random Forest"),
-        "XGBoost":             cv_scores(xgb_pipe, X_train, y_train, "XGBoost"),
+        "Logistic Regression": cv_scores(lr_pipe, X_train, y_train, "Logistic Regression"),
+        "Random Forest": cv_scores(rf_pipe, X_train, y_train, "Random Forest"),
+        "XGBoost": cv_scores(xgb_pipe, X_train, y_train, "XGBoost"),
     }
 
     # Test-set evaluation
     print("\n--- Test-set evaluation ---")
-    lr_metrics,  lr_pred,  lr_proba  = evaluate_on_test(lr_pipe,  X_test, y_test, "Logistic Regression")
-    rf_metrics,  rf_pred,  rf_proba  = evaluate_on_test(rf_pipe,  X_test, y_test, "Random Forest")
+    lr_metrics, lr_pred, lr_proba = evaluate_on_test(lr_pipe, X_test, y_test, "Logistic Regression")
+    rf_metrics, rf_pred, rf_proba = evaluate_on_test(rf_pipe, X_test, y_test, "Random Forest")
     xgb_metrics, xgb_pred, xgb_proba = evaluate_on_test(xgb_pipe, X_test, y_test, "XGBoost")
 
     results = {
@@ -518,11 +517,11 @@ def run():
     ]
     run_key_map = {
         "Logistic Regression": "logistic_regression",
-        "Random Forest":       "random_forest",
-        "XGBoost":             "xgboost",
+        "Random Forest": "random_forest",
+        "XGBoost": "xgboost",
     }
-    pipes   = {"Logistic Regression": lr_pipe,  "Random Forest": rf_pipe,  "XGBoost": xgb_pipe}
-    params  = {"Logistic Regression": lr_params, "Random Forest": rf_params, "XGBoost": xgb_params}
+    pipes = {"Logistic Regression": lr_pipe, "Random Forest": rf_pipe, "XGBoost": xgb_pipe}
+    params = {"Logistic Regression": lr_params, "Random Forest": rf_params, "XGBoost": xgb_params}
     metrics = {"Logistic Regression": lr_metrics, "Random Forest": rf_metrics, "XGBoost": xgb_metrics}
 
     run_ids = {}
