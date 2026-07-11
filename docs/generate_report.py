@@ -603,11 +603,14 @@ def build():
             col_widths=[3.0*cm, 7.0*cm, 5.5*cm],
         ),
         Spacer(1, 0.3*cm),
-        Paragraph("Video Recording", H3),
-        Paragraph(
-            "A short screen-recorded demo of the full pipeline is available at the GitHub "
-            "repository (see README.md for link). The demo covers: docker build → container "
-            "run → /predict → K8s pods → Grafana dashboard.", BODY),
+        Paragraph("Video Demo", H3),
+        tbl(
+            [["#", "Description", "URL"],
+             ["1", "Docker Build — full pipeline runs automatically inside the image", "https://youtu.be/8Ljn7DMnHX0"],
+             ["2", "Docker Run — container starts, API serves instantly", "https://youtu.be/NYpTfF134Ug"],
+             ["3", "End-to-end demo — API predictions, Kubernetes, Monitoring dashboards", "https://youtu.be/6ZizGNL5b-g"]],
+            col_widths=[0.8*cm, 8.5*cm, 6.2*cm],
+        ),
         Spacer(1, 0.3*cm),
         hr(),
         Spacer(1, 0.3*cm),

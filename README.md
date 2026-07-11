@@ -152,3 +152,11 @@ Full project documentation is available at:
 **https://sampathshetty85.github.io/heart-disease-mlops/**
 
 PDF Report: [docs/report.pdf](https://sampathshetty85.github.io/heart-disease-mlops/report.pdf)
+
+## Video Demo
+
+| # | Description | Link |
+|---|---|---|
+| 1 | Docker Build — pipeline runs automatically inside the image | [Watch](https://youtu.be/8Ljn7DMnHX0) |
+| 2 | Docker Run — container starts, API serves instantly | [Watch](https://youtu.be/NYpTfF134Ug) |
+| 3 | End-to-end demo — API predictions, Kubernetes, Monitoring dashboards | [Watch](https://youtu.be/6ZizGNL5b-g) |
