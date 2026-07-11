@@ -9,7 +9,7 @@ End-to-end MLOps pipeline for heart disease prediction — BITS Pilani AIMLCZG52
 | **Course** | AIMLCZG523 — Machine Learning Operations |
 | **Institution** | BITS Pilani (M.Tech AI/ML) |
 | **Documentation** | https://sampathshetty85.github.io/heart-disease-mlops/ |
-| **Report (PDF)** | [docs/report.pdf](docs/report.pdf) |
+| **Report (PDF)** | [docs/report.pdf](https://sampathshetty85.github.io/heart-disease-mlops/report.pdf) |
 
 ## Problem Statement
 
@@ -151,4 +151,4 @@ Accepts patient data, returns prediction and confidence score.
 Full project documentation is available at:
 **https://sampathshetty85.github.io/heart-disease-mlops/**
 
-PDF Report: [docs/report.pdf](docs/report.pdf)
+PDF Report: [docs/report.pdf](https://sampathshetty85.github.io/heart-disease-mlops/report.pdf)
