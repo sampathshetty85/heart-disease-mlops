@@ -21,6 +21,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 from fastapi import FastAPI
+from prometheus_client import Counter
 from prometheus_fastapi_instrumentator import Instrumentator
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -31,6 +32,12 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 _model_name = "unknown"
+
+PREDICTION_COUNTER = Counter(
+    "heart_disease_predictions_total",
+    "Total predictions by outcome label",
+    ["label"],
+)
 
 
 @asynccontextmanager
@@ -76,4 +83,5 @@ def predict_endpoint(patient: PatientFeatures):
         "latency_ms": latency_ms,
     }))
 
+    PREDICTION_COUNTER.labels(label=result["label"]).inc()
     return result

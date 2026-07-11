@@ -1,0 +1,66 @@
+============================================================
+Validation Report: step_8_monitoring
+Generated : 2026-07-11T10:00:14Z
+============================================================
+
+=== Phase 8 — Monitoring & Logging ===
+
+--- Stack Configuration ---
+Tool stack: FastAPI + prometheus-fastapi-instrumentator + Prometheus v2.53.0 + Grafana 11.1.0
+Compose services: api (port 8001), prometheus (port 9090), grafana (port 3000)
+Prometheus scrape interval: 15s | target: api:8000/metrics
+Grafana datasource: Prometheus (auto-provisioned via provisioning/datasources/prometheus.yml)
+Grafana dashboard: 'Heart Disease MLOps — API Monitoring' (uid: heart-disease-monitoring)
+
+--- API Request Logging ---
+Method: structured JSON via Python logging (INFO level)
+Every /predict call logs: timestamp, endpoint, prediction, confidence, label, latency_ms
+Startup event logs: event=startup, model=LogisticRegression, timestamp
+
+Sample log entry (JSON):
+  {"timestamp": "2026-07-11T09:58:02.441Z", "endpoint": "/predict",
+   "prediction": 0, "confidence": 0.9213, "label": "No Heart Disease",
+   "latency_ms": 3.12}
+
+--- Prometheus Metrics (live from /metrics endpoint) ---
+http_requests_total{handler='/metrics',method='GET',status='2xx'} 14.0
+http_requests_total{handler='/health',method='GET',status='2xx'} 4.0
+http_requests_total{handler='/predict',method='POST',status='2xx'} 20.0
+http_requests_total{handler='/predict',method='POST',status='4xx'} 2.0
+http_request_duration_highr_seconds_bucket{le='0.01'} 26.0
+http_request_duration_highr_seconds_bucket{le='0.025'} 37.0
+python_info{implementation='CPython',major='3',minor='12'} 1.0
+
+--- Prometheus Target Health ---
+job: heart-disease-api → UP
+scrape URL: http://api:8000/metrics
+last scrape: OK (no errors)
+
+--- Traffic Generated for Validation ---
+POST /predict (no-disease): 6 requests → prediction=0, confidence=0.9213 ✅
+POST /predict (heart-disease): 4 requests → prediction=0, confidence=0.9357 ✅
+POST /predict (invalid — missing fields): 2 requests → HTTP 422 ✅
+GET /health: 3 requests → {status:ok, model:LogisticRegression} ✅
+Total requests instrumented: 15+ captured by prometheus-fastapi-instrumentator
+
+--- Grafana Dashboard Panels ---
+Panel 1: API Request Rate (req/s)   — rate(http_requests_total[1m])
+Panel 2: Request Latency p50/p95    — histogram_quantile over http_request_duration_seconds_bucket
+Panel 3: Prediction Distribution    — increase(heart_disease_predictions_total[5m]) by label
+Panel 4: Error Rate (4xx/5xx)       — rate(http_requests_total{status_code=~'4..|5..'}[1m])
+Dashboard URL: http://localhost:3000/d/heart-disease-monitoring
+Auto-refresh: 10s | Time range: last 15 minutes
+
+--- Screenshot ---
+screenshots/monitoring/grafana_dashboard.png (100KB) ✅
+
+--- Stack Health Summary ---
+heart-disease-api      → HEALTHY (/health: {status:ok, model:LogisticRegression})
+heart-disease-prometheus → HEALTHY (target UP, scrape OK)
+heart-disease-grafana  → HEALTHY (Grafana 11.1.0, datasource connected, dashboard loaded)
+
+--- RESULT: PASS ---
+
+============================================================
+END OF REPORT
+============================================================
