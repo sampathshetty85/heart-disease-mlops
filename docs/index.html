@@ -167,7 +167,7 @@ function copyCode(btn) {
       </div>
     </div>
     <div class="img-wrap">
-      <img src="../screenshots/architecture_diagram.png" alt="System architecture diagram" />
+      <img src="screenshots/architecture_diagram.png" alt="System architecture diagram" />
       <div class="img-caption">Figure 1 — End-to-end system architecture</div>
     </div>
   </section>
@@ -226,19 +226,19 @@ function copyCode(btn) {
     </div>
     <div class="img-grid">
       <figure>
-        <img src="../screenshots/eda/correlation_heatmap.png" alt="Correlation heatmap" />
+        <img src="screenshots/eda/correlation_heatmap.png" alt="Correlation heatmap" />
         <figcaption>Figure 2 — Feature correlation heatmap</figcaption>
       </figure>
       <figure>
-        <img src="../screenshots/eda/class_distribution.png" alt="Class distribution" />
+        <img src="screenshots/eda/class_distribution.png" alt="Class distribution" />
         <figcaption>Figure 3 — Class balance (54.1% / 45.9%)</figcaption>
       </figure>
       <figure>
-        <img src="../screenshots/eda/feature_histograms.png" alt="Feature histograms" />
+        <img src="screenshots/eda/feature_histograms.png" alt="Feature histograms" />
         <figcaption>Figure 4 — Numeric feature histograms by class</figcaption>
       </figure>
       <figure>
-        <img src="../screenshots/eda/boxplots_by_target.png" alt="Box plots" />
+        <img src="screenshots/eda/boxplots_by_target.png" alt="Box plots" />
         <figcaption>Figure 5 — Box plots: features vs target</figcaption>
       </figure>
     </div>
@@ -286,7 +286,7 @@ function copyCode(btn) {
       Best hyperparameters (LR): C=10, solver=liblinear. XGBoost achieved slightly higher test accuracy (0.8852) but lower CV ROC-AUC — CV generalisation is the primary criterion.
     </p>
     <div class="img-wrap">
-      <img src="../screenshots/eda/roc_curves.png" alt="ROC curves" style="max-width:600px;" />
+      <img src="screenshots/eda/roc_curves.png" alt="ROC curves" style="max-width:600px;" />
       <div class="img-caption">Figure 6 — ROC curves for all 3 models (LR AUC = 0.9632)</div>
     </div>
   </section>
@@ -323,7 +323,7 @@ function copyCode(btn) {
     <pre>Model URI: runs:/e4abcc6349dd4254ac77172fbd19d08c/model
 mlflow ui --backend-store-uri mlruns/   # → http://localhost:5000</pre>
     <div class="img-wrap">
-      <img src="../screenshots/mlflow/experiment_runs.png" alt="MLflow UI" />
+      <img src="screenshots/mlflow/experiment_runs.png" alt="MLflow UI" />
       <div class="img-caption">Figure 7 — MLflow experiment UI: 3 runs with parameters, metrics and artifacts</div>
     </div>
   </section>
@@ -347,7 +347,7 @@ mlflow ui --backend-store-uri mlruns/   # → http://localhost:5000</pre>
       </table>
     </div>
     <div class="img-wrap">
-      <img src="../screenshots/ci/ci_passing.png" alt="GitHub Actions passing" />
+      <img src="screenshots/ci/ci_passing.png" alt="GitHub Actions passing" />
       <div class="img-caption">Figure 8 — GitHub Actions: all 10 steps passing (Run #29148726844 · 1m 38s)</div>
     </div>
   </section>
@@ -385,19 +385,19 @@ mlflow ui --backend-store-uri mlruns/   # → http://localhost:5000</pre>
     </div>
     <div class="img-grid">
       <figure>
-        <img src="../screenshots/k8s/pods_running.png" alt="Pods running" />
+        <img src="screenshots/k8s/pods_running.png" alt="Pods running" />
         <figcaption>Figure 9 — 2/2 pods Running</figcaption>
       </figure>
       <figure>
-        <img src="../screenshots/k8s/predict_response.png" alt="Predict response" />
+        <img src="screenshots/k8s/predict_response.png" alt="Predict response" />
         <figcaption>Figure 10 — POST /predict via K8s port-forward</figcaption>
       </figure>
       <figure>
-        <img src="../screenshots/k8s/health_response.png" alt="Health response" />
+        <img src="screenshots/k8s/health_response.png" alt="Health response" />
         <figcaption>Figure 11 — GET /health → LogisticRegression</figcaption>
       </figure>
       <figure>
-        <img src="../screenshots/docker/swagger_ui.png" alt="Swagger UI" />
+        <img src="screenshots/docker/swagger_ui.png" alt="Swagger UI" />
         <figcaption>Figure 12 — FastAPI Swagger UI</figcaption>
       </figure>
     </div>
@@ -430,7 +430,7 @@ mlflow ui --backend-store-uri mlruns/   # → http://localhost:5000</pre>
 # Prometheus → http://localhost:9090
 # API metrics → http://localhost:8001/metrics</pre>
     <div class="img-wrap">
-      <img src="../screenshots/monitoring/grafana_dashboard.png" alt="Grafana dashboard" />
+      <img src="screenshots/monitoring/grafana_dashboard.png" alt="Grafana dashboard" />
       <div class="img-caption">Figure 13 — Grafana dashboard: request rate, latency p50/p95, prediction distribution, error rate</div>
     </div>
   </section>
