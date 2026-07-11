@@ -1,0 +1,59 @@
+============================================================
+Validation Report: step_6_api
+Generated : 2026-07-11T09:11:22Z
+============================================================
+
+STEP 6 -- Model Containerization (FastAPI + Docker)
+
+--- Docker Image ---
+Image name   : heart-disease-mlops:latest
+Image size   : 304.2 MB
+Base image   : python:3.12-slim
+Build steps  : download.py → preprocess.py → train.py → package.py
+
+--- GET /health ---
+Request      : GET http://localhost:8000/health
+Response     : {"status": "ok", "model": "LogisticRegression"}
+Status       : PASS
+
+--- POST /predict (no disease) ---
+Input        : age=63, sex=1, cp=3, trestbps=145, chol=233, fbs=1,
+               restecg=0, thalach=150, exang=0, oldpeak=2.3, slope=0, ca=0, thal=1
+Response     : {"prediction": 0, "confidence": 0.9357, "label": "No Heart Disease"}
+Status       : PASS
+
+--- POST /predict (disease) ---
+Input        : age=67, sex=1, cp=4, trestbps=160, chol=286, fbs=0,
+               restecg=2, thalach=108, exang=1, oldpeak=1.5, slope=2, ca=3, thal=3
+Response     : {"prediction": 1, "confidence": 0.992, "label": "Heart Disease"}
+Status       : PASS
+
+--- Container Restart Check (Gap 39) ---
+Method       : docker stop → docker start → time to /health response
+Elapsed      : 1094ms
+Threshold    : < 5000ms
+Result       : PASS (confirms no model retraining on restart)
+
+--- Output Reports Inside Container ---
+  output/step_1_1_download.txt : EXISTS
+  output/step_1_2_preprocess.txt : EXISTS
+  output/step_1_3_eda.txt : EXISTS
+  output/step_2_train.txt : EXISTS
+  output/step_3_mlflow.txt : EXISTS
+  output/step_4_packaging.txt : EXISTS
+  output/step_5_ci.txt : EXISTS
+
+--- Unit Tests (all 27 active) ---
+Command      : pytest tests/ -v --tb=short
+Result       : 27 passed, 23 warnings in 1.71s
+
+--- API Endpoints ---
+GET  /health   : liveness check for K8s probes (Phase 7)
+POST /predict  : accepts PatientFeatures JSON, returns prediction + confidence
+GET  /metrics  : Prometheus metrics (Phase 8)
+
+Status : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================

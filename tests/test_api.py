@@ -5,9 +5,13 @@ All tests are skipped until Phase 6 builds src/api/main.py.
 Activated in Phase 6 by removing the skip markers.
 """
 
+import os
+import sys
 import pytest
 
-API_READY = False  # Set to True in Phase 6 when src/api/main.py is built
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
+API_READY = True  # FastAPI app built in Phase 6
 
 
 @pytest.mark.skipif(not API_READY, reason="FastAPI app built in Phase 6")
