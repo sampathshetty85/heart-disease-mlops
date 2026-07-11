@@ -1,0 +1,57 @@
+============================================================
+Validation Report: step_4_packaging
+Generated : 2026-07-11T08:33:12Z
+============================================================
+
+STEP 4 -- Model Packaging & Reproducibility
+
+--- Serialized Artifacts ---
+models/model.joblib      : 1,035 bytes  format=joblib  status=LOADABLE
+models/pipeline.joblib   : 4,874 bytes  format=joblib  status=LOADABLE
+Pipeline steps           : ['preprocessor', 'classifier']
+Model type               : LogisticRegression
+MLflow model URI         : runs:/e4abcc6349dd4254ac77172fbd19d08c/model
+feature_columns.json     : 13 features  status=EXISTS
+Serialization format     : joblib (sklearn-compatible, Python 3.12)
+
+--- Requirements Audit (17 packages) ---
+  pandas                                     pinned=2.2.2        installed=2.2.2        PASS
+  numpy                                      pinned=1.26.4       installed=1.26.4       PASS
+  scikit-learn                               pinned=1.5.0        installed=1.5.0        PASS
+  xgboost                                    pinned=2.0.3        installed=2.0.3        PASS
+  joblib                                     pinned=1.4.2        installed=1.4.2        PASS
+  ucimlrepo                                  pinned=0.0.7        installed=0.0.7        PASS
+  mlflow                                     pinned=2.22.5       installed=2.22.5       PASS
+  fastapi                                    pinned=0.111.0      installed=0.111.0      PASS
+  uvicorn[standard]                          pinned=0.30.1       installed=0.30.1       PASS
+  pydantic                                   pinned=2.7.1        installed=2.7.1        PASS
+  prometheus-fastapi-instrumentator          pinned=7.0.0        installed=7.0.0        PASS
+  pytest                                     pinned=8.2.1        installed=8.2.1        PASS
+  httpx                                      pinned=0.27.0       installed=0.27.0       PASS
+  flake8                                     pinned=7.0.0        installed=7.0.0        PASS
+  matplotlib                                 pinned=3.9.0        installed=3.9.0        PASS
+  seaborn                                    pinned=0.13.2       installed=0.13.2       PASS
+  plotly                                     pinned=5.22.0       installed=5.22.0       PASS
+
+  Summary: 17 PASS  0 WARN  0 FAIL
+  Overall: PASS
+
+--- Smoke Test ---
+  Input  : {'age': 63, 'sex': 1, 'cp': 3, 'trestbps': 145, 'chol': 233, 'fbs': 1, 'restecg': 0, 'thalach': 150, 'exang': 0, 'oldpeak': 2.3, 'slope': 0, 'ca': 0, 'thal': 1}
+  Output : prediction=0  confidence=0.9357  label=No Heart Disease
+  Status : PASS
+
+--- Determinism Check ---
+  Run 1  : prediction=0  confidence=0.9357
+  Run 2  : prediction=0  confidence=0.9357
+  Match  : PASS
+
+--- Docker Proof ---
+  Docker build/test proof: see Phase 6 -- output/step_6_api.txt
+  (model baked into image at docker build time; API serves instantly on container start)
+
+Status : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================
