@@ -78,7 +78,7 @@
       <div class="qs-label"><span class="qs-num">1</span> Clone the repository</div>
       <p class="qs-desc">Download the project to your local machine.</p>
       <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <button class="copy-btn" title="Copy" onclick="copyCode(this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
         <pre>git clone https://github.com/sampathshetty85/heart-disease-mlops.git
 cd heart-disease-mlops</pre>
       </div>
@@ -89,7 +89,7 @@ cd heart-disease-mlops</pre>
       <div class="qs-label"><span class="qs-num">2</span> Build the Docker image</div>
       <p class="qs-desc">This single command runs the full pipeline automatically — installs all dependencies, downloads the Heart Disease UCI dataset, cleans and preprocesses the data, trains Logistic Regression, Random Forest, and XGBoost models, then packages the best one. Takes 3–5 minutes on first run. Subsequent builds are faster due to Docker layer caching.</p>
       <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <button class="copy-btn" title="Copy" onclick="copyCode(this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
         <pre>docker build -t heart-disease-api .</pre>
       </div>
     </div>
@@ -99,7 +99,7 @@ cd heart-disease-mlops</pre>
       <div class="qs-label"><span class="qs-num">3</span> Run the container</div>
       <p class="qs-desc">The API starts immediately. The model is already baked into the image — no training happens at startup.</p>
       <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <button class="copy-btn" title="Copy" onclick="copyCode(this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
         <pre>docker run -p 8000:8000 heart-disease-api</pre>
       </div>
     </div>
@@ -109,7 +109,7 @@ cd heart-disease-mlops</pre>
       <div class="qs-label"><span class="qs-num" style="background:var(--green);">✓</span> Test it</div>
       <p class="qs-desc">Open a new terminal and run the commands below. Or open <a href="http://localhost:8000/docs" target="_blank">http://localhost:8000/docs</a> for the interactive Swagger UI.</p>
       <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <button class="copy-btn" title="Copy" onclick="copyCode(this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
         <pre>curl http://localhost:8000/health
 
 curl -X POST http://localhost:8000/predict \
@@ -123,7 +123,7 @@ curl -X POST http://localhost:8000/predict \
       <div class="qs-label" style="color:var(--muted);font-size:0.95rem;">Optional — Monitoring stack (API + Prometheus + Grafana)</div>
       <p class="qs-desc">Starts all three services together. Grafana dashboard is pre-configured at <a href="http://localhost:3000" target="_blank">localhost:3000</a> (login: admin / admin).</p>
       <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <button class="copy-btn" title="Copy" onclick="copyCode(this)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
         <pre>docker-compose up -d</pre>
       </div>
     </div>
@@ -135,8 +135,8 @@ curl -X POST http://localhost:8000/predict \
 function copyCode(btn) {
   const code = btn.nextElementSibling.innerText;
   navigator.clipboard.writeText(code).then(() => {
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    setTimeout(() => btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>', 2000);
   });
 }
 </script>

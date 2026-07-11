@@ -226,11 +226,16 @@ footer a { color: var(--accent); text-decoration: none; }
   background: var(--bg3);
   border: 1px solid var(--border);
   color: var(--muted);
-  font-size: 0.75rem;
-  padding: 0.25rem 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
   z-index: 1;
 }
-.copy-btn:hover { background: var(--accent); color: #0d1117; }
+.copy-btn:hover { background: var(--accent); color: #0d1117; border-color: var(--accent); }
+.copy-btn svg { display: block; pointer-events: none; }
