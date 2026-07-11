@@ -1,0 +1,47 @@
+============================================================
+Validation Report: step_2_train
+Generated : 2026-07-11T08:03:03Z
+============================================================
+
+STEP 2 -- Feature Engineering & Model Development
+
+--- Preprocessing Pipeline ---
+ColumnTransformer:
+  StandardScaler      -> ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
+  OneHotEncoder       -> ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'ca', 'thal']
+  drop='first'        -> prevents LR multicollinearity; harmless for trees
+  handle_unknown='ignore' -> safe at API inference for unseen categories
+
+--- Cross-Validation Results (5-fold stratified, on X_train) ---
+  Logistic Regression : ROC-AUC = 0.9026 +/- 0.0162  F1 = 0.8252 +/- 0.0171  Acc = 0.8471 +/- 0.0208
+  Random Forest       : ROC-AUC = 0.8845 +/- 0.0270  F1 = 0.7614 +/- 0.0221  Acc = 0.7933 +/- 0.0233
+  XGBoost             : ROC-AUC = 0.8690 +/- 0.0188  F1 = 0.7498 +/- 0.0247  Acc = 0.7770 +/- 0.0222
+
+--- Test-Set Evaluation (held-out X_test, n=61) ---
+Model                   Accuracy  Precision   Recall       F1   ROC-AUC
+------------------------------------------------------------------------
+Logistic Regression       0.8689     0.8333   0.8929   0.8621    0.9632
+Random Forest             0.8689     0.8333   0.8929   0.8621    0.9481
+XGBoost                   0.8852     0.8621   0.8929   0.8772    0.9383
+
+--- Model Selection ---
+Criterion      : highest CV ROC-AUC (primary); F1 tiebreaker
+Best model     : Logistic Regression
+CV ROC-AUC     : 0.9026
+Best params    : {'classifier__C': 10, 'classifier__solver': 'liblinear'}
+
+--- Saved Artifacts ---
+models/model.joblib    : 1,035 bytes
+models/pipeline.joblib : 4,874 bytes
+Serialization format   : joblib
+Note: models/ is gitignored -- artifacts baked into Docker image at build time
+
+--- Charts ---
+screenshots/eda/roc_curves.png         : ROC curves all models overlaid
+screenshots/eda/confusion_matrices.png : confusion matrices all models
+
+Status : COMPLETE
+
+============================================================
+END OF REPORT
+============================================================
