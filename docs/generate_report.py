@@ -606,9 +606,9 @@ def build():
         Paragraph("Video Demo", H3),
         tbl(
             [["#", "Description", "URL"],
-             ["1", "Docker Run — container starts, API serves instantly", "https://youtu.be/8Ljn7DMnHX0"],
-             ["2", "End-to-end demo — API predictions, Kubernetes, Monitoring dashboards", "https://youtu.be/NYpTfF134Ug"],
-             ["3", "Docker Build — full pipeline runs automatically inside the image", "https://youtu.be/6ZizGNL5b-g"]],
+             ["1", "End-to-end demo — API predictions, Kubernetes, Monitoring dashboards", "https://youtu.be/NYpTfF134Ug"],
+             ["2", "Docker Build — full pipeline runs automatically inside the image", "https://youtu.be/6ZizGNL5b-g"],
+             ["3", "Docker Run — container starts, API serves instantly", "https://youtu.be/8Ljn7DMnHX0"]],
             col_widths=[0.8*cm, 8.5*cm, 6.2*cm],
         ),
         Spacer(1, 0.3*cm),
